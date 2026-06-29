@@ -1,51 +1,18 @@
 import { readFileSync, existsSync } from "node:fs";
 
-let exitCode = 0;
+const valid = new Set([
+	"GET", "POST", "PATCH", "PUT", "DELETE",
+	"OPTIONS", "HEAD", "fallback", "prerender",
+	"trailingSlash", "config", "entries",
+]);
 
-// --- Rolldown (via Vite) ---
-const rolldownEntry = "dist/vite/entry-a.js";
-if (existsSync(rolldownEntry)) {
-	const code = readFileSync(rolldownEntry, "utf8");
-	const exportLines = code.match(/^export \{.*\};$/m);
-
-	const exports = exportLines
-		? exportLines[0]
-				.replace(/^export \{/, "")
-				.replace(/\};?$/, "")
-				.split(",")
-				.map((s) => s.trim())
-		: [];
-
-	const valid = new Set([
-		"GET", "POST", "PATCH", "PUT", "DELETE",
-		"OPTIONS", "HEAD", "fallback", "prerender",
-		"trailingSlash", "config", "entries",
-	]);
-
-	const leaked = exports.filter((e) => {
-		const name = e.includes(" as ") ? e.split(" as ")[1] : e;
-		return !valid.has(name) && !name.startsWith("_");
-	});
-
-	if (leaked.length > 0) {
-		console.error("FAIL  rolldown: leaked exports from entry-a.js:");
-		for (const e of leaked) {
-			console.error(`        ${e}`);
-		}
-		console.error(`        full export line: ${exportLines[0]}`);
-		exitCode = 1;
-	} else {
-		console.log("PASS  rolldown: entry-a.js only exports valid names");
+function checkExports(file, label) {
+	if (!existsSync(file)) {
+		console.error(`SKIP  ${label}: ${file} not found (run the build first)`);
+		return 1;
 	}
-} else {
-	console.error("SKIP  rolldown: dist/vite/entry-a.js not found (run `pnpm build:vite` first)");
-	exitCode = 1;
-}
 
-// --- Rollup ---
-const rollupEntry = "dist/rollup/entry-a.js";
-if (existsSync(rollupEntry)) {
-	const code = readFileSync(rollupEntry, "utf8");
+	const code = readFileSync(file, "utf8");
 	const exportLines = [...code.matchAll(/^export \{.*\};?$/gm)].map((m) => m[0]);
 
 	const allExports = exportLines
@@ -64,17 +31,20 @@ if (existsSync(rollupEntry)) {
 	});
 
 	if (leaked.length > 0) {
-		console.error("FAIL  rollup: leaked exports from entry-a.js:");
+		console.error(`FAIL  ${label}: leaked exports from entry-a.js:`);
 		for (const e of leaked) {
 			console.error(`        ${e}`);
 		}
-		exitCode = 1;
-	} else {
-		console.log("PASS  rollup: entry-a.js only exports valid names");
+		console.error(`        full export line: ${exportLines.join(" | ")}`);
+		return 1;
 	}
-} else {
-	console.error("SKIP  rollup: dist/rollup/entry-a.js not found (run `pnpm build:rollup` first)");
-	exitCode = 1;
+
+	console.log(`PASS  ${label}: entry-a.js only exports valid names`);
+	return 0;
 }
 
+let exitCode = 0;
+exitCode |= checkExports("dist/rolldown/entry-a.js", "rolldown");
+exitCode |= checkExports("dist/vite/entry-a.js", "vite (rolldown)");
+exitCode |= checkExports("dist/rollup/entry-a.js", "rollup");
 process.exit(exitCode);

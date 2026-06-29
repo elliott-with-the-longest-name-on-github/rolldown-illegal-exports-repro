@@ -18,6 +18,9 @@ importers:
       '@rollup/plugin-node-resolve':
         specifier: ^16.0.3
         version: 16.0.3(rollup@4.62.2)
+      rolldown:
+        specifier: 1.0.0
+        version: 1.0.0
       rollup:
         specifier: ^4.62.2
         version: 4.62.2
