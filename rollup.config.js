@@ -13,7 +13,7 @@ export default {
 		chunkFileNames: "chunks/[name].js",
 	},
 	plugins: [
-		nodeResolve({ preferBuiltins: true }),
+		nodeResolve({ preferBuiltins: true, exportConditions: ["import", "node", "default"] }),
 		commonjs({ transformMixedEsModules: true }),
 	],
 };

@@ -12,4 +12,6 @@ export default defineConfig({
 		chunkFileNames: "chunks/[name].js",
 	},
 	preserveEntrySignatures: "strict",
+	platform: "node",
+	external: [],
 });
