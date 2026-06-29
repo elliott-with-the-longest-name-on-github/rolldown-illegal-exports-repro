@@ -45,6 +45,5 @@ function checkExports(file, label) {
 
 let exitCode = 0;
 exitCode |= checkExports("dist/rolldown/entry-a.js", "rolldown");
-exitCode |= checkExports("dist/vite/entry-a.js", "vite (rolldown)");
 exitCode |= checkExports("dist/rollup/entry-a.js", "rollup");
 process.exit(exitCode);

@@ -40,9 +40,6 @@ Output:
 FAIL  rolldown: leaked exports from entry-a.js:
         require_token_error as n
         require_token_util as t
-FAIL  vite (rolldown): leaked exports from entry-a.js:
-        require_token_error as n
-        require_token_util as t
 PASS  rollup: entry-a.js only exports valid names
 ```
 
@@ -51,6 +48,5 @@ Requires `platform: "node"` (rolldown defaults to `"browser"`, which resolves `@
 ## Environment
 
 - rolldown 1.0.0
-- Vite 8.0.12
 - Rollup 4.62.2
 - Node.js v24.12.0
