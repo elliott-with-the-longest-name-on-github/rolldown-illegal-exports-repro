@@ -1,0 +1,21 @@
+{
+  "name": "rolldown-illegal-exports-repro",
+  "private": true,
+  "type": "module",
+  "description": "Minimal reproduction of rolldown leaking __commonJSMin wrappers as top-level ESM exports",
+  "scripts": {
+    "build:vite": "node vite-build.mjs",
+    "build:rollup": "rollup -c rollup.config.js",
+    "build:all": "pnpm build:vite && pnpm build:rollup",
+    "verify": "node verify.mjs"
+  },
+  "dependencies": {
+    "@vercel/sandbox": "1.10.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "rollup": "^4.62.2",
+    "vite": "8.0.12"
+  }
+}
