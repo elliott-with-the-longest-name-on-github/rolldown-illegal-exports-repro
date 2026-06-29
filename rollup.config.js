@@ -12,6 +12,8 @@ export default {
 		entryFileNames: "[name].js",
 		chunkFileNames: "chunks/[name].js",
 	},
+	preserveEntrySignatures: "strict",
+	external: [],
 	plugins: [
 		nodeResolve({ preferBuiltins: true, exportConditions: ["import", "node", "default"] }),
 		commonjs({ transformMixedEsModules: true }),
